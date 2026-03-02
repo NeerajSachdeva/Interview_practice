@@ -1,0 +1,11 @@
+What Practicing These Gives You
+
+These 5 programs cover ~80% of backend coding interview patterns:
+
+Problem	Pattern
+
+Banking System      	Concurrency + locks
+Rate Limiter	        Sliding window
+LRU Cache           	HashMap + DLL
+Parking Lot	            PriorityQueue
+Leaderboard	            TreeMap
