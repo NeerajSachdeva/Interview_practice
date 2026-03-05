@@ -2,56 +2,67 @@ package basic;
 
 import java.util.*;
 
-public class MedianFinder {
+class MedianFinder {
 
-    // TreeMap stores number → count
-    private TreeMap<Integer, Integer> map = new TreeMap<>();
-    private int size = 0;
+    private Map<Integer, Integer> intContainerMap = null;
+    int containerSize;
 
-    // Add number
-    public void add(int num) {
-        map.put(num, map.getOrDefault(num, 0) + 1);
-        size++;
+    public MedianFinder() {
+        intContainerMap = new TreeMap<>();
     }
 
-    // Remove number
-    public boolean remove(int num) {
-        if (!map.containsKey(num)) return false;
-        if (map.get(num) == 1) map.remove(num);
-        else map.put(num, map.get(num) - 1);
-        size--;
+    public int add(int value) {
+        Integer mapValue = intContainerMap.get(value);
+
+        if (mapValue == null) {
+            intContainerMap.putIfAbsent(value, 1);
+        } else {
+            intContainerMap.put(value, ++mapValue);
+        }
+
+        ++containerSize;
+        return containerSize;
+    }
+
+    public boolean delete(int value) {
+        Integer mapValue = intContainerMap.get(value);
+        if (mapValue == null) {
+            return false;
+        } else if (mapValue == 1) {
+            intContainerMap.remove(value);
+        } else {
+            intContainerMap.put(value, mapValue - 1);
+
+        }
+        --containerSize;
         return true;
     }
 
-    // Find median
-    public double findMedian() {
-        if (size == 0) throw new NoSuchElementException();
+    public Optional<Integer> getMedian() {
+        if (containerSize == 0) {
+            return Optional.empty();
+        }
 
-        int mid1 = (size + 1) / 2; // 1-based index
-        int mid2 = (size % 2 == 0) ? mid1 + 1 : mid1;
+        int medianIndex = 0;
+        if ((containerSize % 2 == 0)) {
+            medianIndex = containerSize / 2;
+        } else {
+            medianIndex = (containerSize + 1) / 2;
+        }
 
         int count = 0;
-        int median1 = 0, median2 = 0;
+        int result = 0;
 
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : intContainerMap.entrySet()) {
             count += entry.getValue();
-            if (count >= mid1 && median1 == 0) median1 = entry.getKey();
-            if (count >= mid2) {
-                median2 = entry.getKey();
+
+            if (count >= medianIndex) {
+                result = entry.getKey();
                 break;
             }
         }
 
-        return (median1 + median2) / 2.0;
-    }
 
-    public static void main(String[] args) {
-        MedianFinder mf = new MedianFinder();
-        mf.add(10);
-        mf.add(20);
-        mf.add(30);
-        System.out.println("Median: " + mf.findMedian()); // 20.0
-        mf.remove(20);
-        System.out.println("Median: " + mf.findMedian()); // 20.0 (10+30)/2
+        return Optional.of(result);
     }
 }
